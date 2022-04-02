@@ -1,10 +1,14 @@
-# Getting Started with Create React App
+# Getting Started with A template project
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 This is using:
 CRA for the frontend currently
 SQLite + Express for the rest API
+
+## Running
+
+
 
 ## Available Scripts
 
