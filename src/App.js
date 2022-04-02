@@ -1,26 +1,28 @@
 import React, {useState} from 'react';
 import './App.css';
+import './components/Sidebar/Sidebar'
+import Sidebar from './components/Sidebar/Sidebar';
 
 function App() {
 
-  const [employees, setEmployees] = useState([]);
-  const fetchEmployees = () => {
+  const [physicians, setPhysicians] = useState([]);
+  const fetchPhysicians = () => {
 
-    fetch('http://localhost:3000/employee')
+    fetch('http://localhost:3000/physician')
       .then( response => response.json())
       .then(data => {
         console.log(data);
-        setEmployees(data);
+        setPhysicians(data);
       });
   }
-  if (employees.length === 0) {
-    fetchEmployees();
+  if (physicians.length === 0) {
+    fetchPhysicians();
   }
 
   return (
     <div className="App">
-      <header className="App-header">Template App</header>
-      <p>{`Have ${employees.length} employee records :)`}</p>
+      <Sidebar physicians={physicians}/>
+      
     </div>
   );
 }

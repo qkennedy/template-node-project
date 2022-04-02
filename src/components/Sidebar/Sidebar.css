@@ -1,0 +1,13 @@
+.Sidebar {
+  background-color: #282c34;
+  text-align: center;
+  min-width: 300px;
+  display: flex;
+  flex-direction: row;
+}
+.physSelect {
+  
+}
+.physButton {
+
+}
