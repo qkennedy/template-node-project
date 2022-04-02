@@ -20,14 +20,14 @@ const getAllEmployees = (callback) => {
   return db.all(`SELECT * FROM employees;`, callback);
 }
 
-
-db.serialize(function() {
 // DB Initializing
-db.run("CREATE TABLE employees (id INTEGER, firstName NVARCHAR(40), lastName NVARCHAR(40), age INTEGER)");
-
-createEmployee("Will", "Mathers", 25);
-createEmployee("Quinn", "Kennedy", 26);
+db.serialize(function() {
+  db.run("CREATE TABLE employees (id INTEGER, firstName NVARCHAR(40), lastName NVARCHAR(40), age INTEGER)");
+  createEmployee("Will", "Mathers", 25);
+  createEmployee("Quinn", "K", 26);
+  createEmployee("Cam", "K", 22);
 });
+
 // Express Routes
 
 app.use(express.static(path.join(__dirname, 'build')));

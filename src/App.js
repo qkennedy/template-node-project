@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
 
-  const [employees, setEmployees] = useState([]); 
+  const [employees, setEmployees] = useState([]);
   const fetchEmployees = () => {
 
     fetch('http://localhost:3000/employee')
@@ -20,6 +19,7 @@ function App() {
 
   return (
     <div className="App">
+      <header className="App-header">Template App</header>
       <p>{`Have ${employees.length} employee records :)`}</p>
     </div>
   );
