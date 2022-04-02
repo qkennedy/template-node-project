@@ -9,34 +9,67 @@ var db = new sqlite3.Database(':memory:');
 
 // Functions for Interacting with DB
 
-const createEmployee = (firstName, lastName, age) => {
+const createPhysician = (firstName, lastName) => {
   const id =  uuid.v4(); 
-  let createStatement = db.prepare("INSERT INTO employees VALUES (?, ?, ?, ?)");
-  createStatement.run(id, firstName, lastName, age);
+  let createStatement = db.prepare("INSERT INTO physicians VALUES (?, ?, ?)");
+  createStatement.run(id, firstName, lastName);
   createStatement.finalize();
 }
 
-const getAllEmployees = (callback) => {
-  return db.all(`SELECT * FROM employees;`, callback);
+const getAllPhysicians = (callback) => {
+  return db.all(`SELECT * FROM physicians;`, callback);
 }
 
-const getEmployeeById = (id, callback) => {
-  return db.get(`SELECT * FROM employees WHERE id=?`, id, callback)
+getAppointmentsByPhysicianId = (physicianId, callback) => {
+  return db.all(`SELECT * FROM appointments WHERE physicianId=?`, physicianId, callback)
 }
+
+// unnecessary for this assignment
+const getPhysicianById = (id, callback) => {
+  return db.get(`SELECT * FROM physicians WHERE id=?`, id, callback)
+}
+
+const createAppointment = (physicianId, patientFirst, patientLast, time, type) => {
+  const id =  uuid.v4(); 
+  let createStatement = db.prepare("INSERT INTO appointments VALUES (?, ?, ?, ?, ?, ?)");
+  createStatement.run(id, patientFirst, patientLast, time, type, physicianId);
+  createStatement.finalize();
+}
+
 
 // DB Initializing
 db.serialize(function() {
-  db.run("CREATE TABLE employees (id INTEGER, firstName NVARCHAR(40), lastName NVARCHAR(40), age INTEGER)");
-  createEmployee("Will", "Mathers", 25);
-  createEmployee("Quinn", "K", 26);
-  createEmployee("Cam", "K", 22);
+  db.run("CREATE TABLE physicians (physicianId NVARCHAR(36) PRIMARY KEY, firstName NVARCHAR(40), lastName NVARCHAR(40))");
+  db.run(`
+    CREATE TABLE appointments
+    (
+      appointmentId NVARCHAR(36) PRIMARY KEY,
+      patientFirstName NVARCHAR(40),
+      patientLastName NVARCHAR(40),
+      time NVARCHAR(10),
+      type NVARCHAR(100),
+      physicianId NVARCHAR(36),
+      FOREIGN KEY (physicianId)
+          REFERENCES physicians (physicianId)
+    );
+  `);
+  createPhysician("Julius", "Hibbert");
+  createPhysician("Alger", "Krieger");
+  createPhysician("Cam", "K");
+  getAllPhysicians( (err, rows) => {
+    let physicians = rows;
+    for (const physician of physicians) {
+      createAppointment(physician.id, "Lana", "Kane", "8:00AM", "Follow-up");
+    }
+  });
+
 });
 
 // Express Routes
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/employee', function (req, res) {
+app.get('/physician', function (req, res) {
   const dbCallback = (err, rows) => {
     if (err) {
       console.log(err);
@@ -46,11 +79,11 @@ app.get('/employee', function (req, res) {
       res.send(rows);
     }
   };
- getAllEmployees(dbCallback);
+ getAllPhysicians(dbCallback);
 });
 
-app.get('/employee/:employeeId', function (req, res) {
-  const id = req.params.employeeId;
+app.get('/physician/:physicianId', function (req, res) {
+  const id = req.params.physicianId;
   if (!uuid.validate(id)) {
     res.sendStatus(400)
   }
@@ -67,7 +100,29 @@ app.get('/employee/:employeeId', function (req, res) {
         res.send(rows);
       }
     };
-   getEmployeeById(id, dbCallback);
+   getPhysicianById(id, dbCallback);
+  }
+});
+
+app.get('/physician/:physicianId/appointments', function (req, res) {
+  const id = req.params.physicianId;
+  if (!uuid.validate(id)) {
+    res.sendStatus(400)
+  }
+  else {
+    const dbCallback = (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      }
+      else if (!rows) {
+        res.sendStatus(404);
+      }
+      else {
+        res.send(rows);
+      }
+    };
+   getAppointmentsByPhysicianId(id, dbCallback);
   }
 });
 
@@ -76,4 +131,4 @@ app.get('/', function (req, res) {
 });
 
 app.listen(process.env.PORT || 8080);
-console.log("listening :)")
+console.log("listening...")
