@@ -21,7 +21,7 @@ const getAllPhysicians = (callback) => {
 }
 
 getAppointmentsByPhysicianId = (physicianId, callback) => {
-  return db.all(`SELECT * FROM appointments WHERE physicianId=?`, physicianId, callback)
+  return db.all(`SELECT * FROM appointments`, callback)
 }
 
 // unnecessary for this assignment
@@ -29,7 +29,7 @@ const getPhysicianById = (id, callback) => {
   return db.get(`SELECT * FROM physicians WHERE id=?`, id, callback)
 }
 
-const createAppointment = (physicianId, patientFirst, patientLast, time, type) => {
+const createAppointment = (patientFirst, patientLast, time, type, physicianId) => {
   const id =  uuid.v4(); 
   let createStatement = db.prepare("INSERT INTO appointments VALUES (?, ?, ?, ?, ?, ?)");
   createStatement.run(id, patientFirst, patientLast, time, type, physicianId);
@@ -59,7 +59,7 @@ db.serialize(function() {
   getAllPhysicians( (err, rows) => {
     let physicians = rows;
     for (const physician of physicians) {
-      createAppointment(physician.id, "Lana", "Kane", "8:00AM", "Follow-up");
+      createAppointment("Lana", "Kane", "8:00AM", "Follow-up", physician.physicianId);
     }
   });
 

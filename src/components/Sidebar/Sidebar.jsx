@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 
 function Sidebar(props) {
 
-  const { physicians } = props;
+  const { physicians, handlePhysSelect } = props;
   
   return (
-    <div className="">
+    <div>
       <h2>Notable</h2>
       <h3>Physicians</h3>
       {physicians && physicians.map(phys => (
-        <button>
+        <button onClick={() => handlePhysSelect(phys)}>
           <p>{`${phys.firstName} ${phys.lastName}`}</p>
         </button>
       ))}
