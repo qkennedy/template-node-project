@@ -1,4 +1,4 @@
-# Getting Started with A template project
+# Getting Started with a template project
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
