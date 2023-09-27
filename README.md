@@ -8,7 +8,10 @@ SQLite + Express for the rest API
 
 ## Running
 
+Start the backend (sqlite/express) with `npm run backend`
+Start the frontend with `npm run start`
 
+default port is 3000, rest api is on 8080 but requests from the frontend are proxied through react port.
 
 ## Available Scripts
 
